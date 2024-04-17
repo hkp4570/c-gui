@@ -1,0 +1,23 @@
+{
+  "name": "c-gui",
+  "version": "1.0.0",
+  "main": "/src/index.js",
+  "repository": "https://github.com/hkp4570/c-gui.git",
+  "author": "hkp <colourful4570@163.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack"
+  },
+  "dependencies": {
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "devDependencies": {
+    "clean-webpack-plugin": "^4.0.0",
+    "css-loader": "^7.1.1",
+    "mini-css-extract-plugin": "^2.9.0",
+    "sass": "^1.75.0",
+    "sass-loader": "^14.2.1",
+    "style-loader": "^4.0.0"
+  }
+}
