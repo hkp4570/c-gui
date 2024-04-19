@@ -1,0 +1,94 @@
+@import 'hover';
+
+.c-gui {
+
+  label, input, button {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  input {
+    border: 0;
+    outline: none;
+    font-family: var(--font-family);
+    font-size: var(--input-font-size);
+    border-radius: var(--widget-border-radius);
+    height: var(--widget-height);
+    background: var(--widget-color);
+    color: var(--text-color);
+    width: 100%;
+    @include can-hover {
+      &:hover {
+        background: var(--hover-color);
+      }
+      &:active {
+        background: var(--focus-color);
+      }
+    }
+    &:disabled {
+      opacity: 1; // override default iOS style, we already dim .controller
+    }
+  }
+
+  input[type='text'],
+  input[type='number'] {
+    padding: var(--widget-padding);
+    -moz-appearance: textfield; // needed to hide number spinners on android firefox
+    &:focus {
+      background: var(--focus-color);
+    }
+  }
+
+  input[type='checkbox'] {
+    appearance: none;
+    width: var(--checkbox-size);
+    height: var(--checkbox-size);
+    border-radius: var(--widget-border-radius);
+    text-align: center;
+    cursor: pointer;
+    &:checked:before {
+      font-family: 'lil-gui';
+      content: '✓';
+      font-size: var(--checkbox-size);
+      line-height: var(--checkbox-size);
+    }
+
+    @include can-hover {
+      &:focus {
+        box-shadow: inset 0 0 0 1px var(--focus-color);
+      }
+    }
+  }
+
+  button {
+    outline: none;
+    cursor: pointer;
+
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    color: var(--text-color);
+
+    width: 100%;
+    height: var(--widget-height);
+
+    // todo: this is only here because three.js defines a global button style
+    text-transform: none;
+
+    background: var(--widget-color);
+    border-radius: var(--widget-border-radius);
+
+    border: none;
+
+    @include can-hover {
+      &:hover {
+        background: var(--hover-color);
+      }
+      &:focus {
+        box-shadow: inset 0 0 0 1px var(--focus-color);
+      }
+    }
+
+    &:active {
+      background: var(--focus-color);
+    }
+  }
+}
