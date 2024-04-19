@@ -7,12 +7,15 @@
 <body>
 
     <script type="module">
-        import GUI from 'https://cdn.jsdelivr.net/npm/lil-gui@0.19.2/+esm'
+        import GUI from './scripts/lil-gui.js';
 
         const gui = new GUI({
             title: 'lil-gui'
         });
-        console.log(gui)
+        /**
+         * 第三个参数是可选的，用来设置选项 [1,2,3] {1:1,2:2,3:3} 对象的话用key值作为选项
+         */
+        gui.add({options:1},'options',[1,2,3]);
     </script>
 </body>
 </html>

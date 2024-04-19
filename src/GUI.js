@@ -1,3 +1,4 @@
+import OptionController from "./OptionController";
 export default class GUI {
     /**
      * 创建包含控制器的面板
@@ -113,6 +114,21 @@ export default class GUI {
         }
         this._closeFolders = closeFolders;
     }
+    /**
+     * 将控制器添加到 GUI，使用“typeof”运算符推断控制器类型
+     * @param object 控制器将要修改的对象
+     * @param property 控制的属性的名称
+     * @param {number|object|Array} [$1] 数字控制器的最小值，或下拉列表的一组可选值
+     * @param [max] 数字控制器的最大值
+     * @param [step] 数字控制器的步长值
+     * @return {this}
+     */
+    add(object,property,$1,max,step){
+        // 是一个对象或者是一个数组
+        if(Object($1) === $1){
+            return new OptionController(this,object,property,$1);
+        }
+    }
 
     /**
      * 更改gui的标题
@@ -124,5 +140,18 @@ export default class GUI {
         this._title = title;
         this.$title.textContent = title;
         return this;
+    }
+
+    /**
+     * controller选项改变时调用
+     * @param controller
+     */
+    _callOnChange(controller){
+        if(this.parent){
+
+        }
+        if(this._onChange !== undefined){
+
+        }
     }
 }

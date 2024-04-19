@@ -5,14 +5,28 @@
     <title>c-gui</title>
     <script src="./dist/js/c-gui.js"></script>
     <link rel="stylesheet" href="./dist/css/c-gui.css">
+    <style>
+        #container{
+            width: 600px;
+            height: 600px;
+            margin: 200px auto;
+            border: 1px solid;
+        }
+    </style>
 </head>
 <body>
+    <div id="container">
+
+    </div>
 <script>
     const {GUI} = c_gui;
     const gui = new GUI({
-        width: 369
+        width: 369,
+        title: 'c-gui',
+        container: document.getElementById('container')
     });
-    console.log(gui);
+    console.log(gui, 'gui')
+    gui.add({options:1},'options',[1,2,3]);
 </script>
 </body>
 </html>
