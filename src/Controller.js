@@ -153,6 +153,21 @@ export default class Controller {
     }
 
     /**
+     * 传递一个在该控制器被修改并失去焦点后调用的函数。
+     * @param {Function} callback
+     * @returns {this}
+     * @example
+     * const controller = gui.add( object, 'property' );
+     * controller.onFinishChange( function( v ) {
+     * console.log( 'Changes complete: ' + v );
+     * console.assert( this === controller );
+     */
+    onFinishChange(callback){
+        this._onFinishChange = callback;
+        return this;
+    }
+
+    /**
      * 当控制器的小部件失去焦点时应该由控制器调用。
      * @protected
      */
@@ -160,7 +175,7 @@ export default class Controller {
         if(this._changed){
             this.parent._callOnFinishChange(this);
             if(this._onFinishChange !== undefined){
-
+                this._onFinishChange.call(this, this.getValue());
             }
         }
         this._changed = false;

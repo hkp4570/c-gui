@@ -25,15 +25,19 @@
             title: 'c-gui',
             container: document.getElementById('container')
         });
-        console.log(gui, 'gui')
         const controller = gui.add({options: 1}, 'options', [1, 2, 3]);
-        console.log(controller, 'controller')
+        controller.name('c-gui-options');
         controller.onChange(function (value) {
-            console.log(value, 'value');
-            console.log(this === controller, 'this === controller');
+            console.log(value, 'controller.onChange');
         })
-        gui.onChange(function (value) {
-            console.log(value, 'value');
+        controller.onFinishChange(function(value){
+            console.log(value, 'controller.onFinishChange');
+        })
+        gui.onChange(function(value){
+            console.log(value,'onChange');
+        })
+        gui.onFinishChange(function(value){
+            console.log(value, 'onFinishChange');
         })
     </script>
 </body>

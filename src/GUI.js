@@ -176,13 +176,33 @@ export default class GUI {
             })
         }
     }
+    /**
+     * 传递一个函数，每当此 GUI 中的控制器完成更改时就会调用该函数。
+     * @param {Function} controller
+     * @returns {this}
+     * @example
+     * gui.onFinishChange( event => {
+     *    event.object     // object that was modified
+     *    event.property   // string, name of property
+     *    event.value      // new value of controller
+     *    event.controller // controller that was modified
+     * } );
+     */
+    onFinishChange(callback){
+        this._onFinishChange = callback;
+        return this;
+    }
     _callOnFinishChange(controller){
         if(this.parent){
 
         }
-        console.log(this._onFinishChange, 'this._onFinishChange')
         if(this._onFinishChange !== undefined){
-
+            this._onFinishChange.call(this,{
+                object: controller.object,
+                property: controller.property,
+                value: controller.getValue(),
+                controller: controller
+            })
         }
     }
 }
