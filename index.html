@@ -6,7 +6,7 @@
     <script src="./dist/js/c-gui.js"></script>
     <link rel="stylesheet" href="./dist/css/c-gui.css">
     <style>
-        #container{
+        #container {
             width: 600px;
             height: 600px;
             margin: 200px auto;
@@ -18,15 +18,23 @@
     <div id="container">
 
     </div>
-<script>
-    const {GUI} = c_gui;
-    const gui = new GUI({
-        width: 369,
-        title: 'c-gui',
-        container: document.getElementById('container')
-    });
-    console.log(gui, 'gui')
-    gui.add({options:1},'options',[1,2,3]);
-</script>
+    <script>
+        const {GUI} = c_gui;
+        const gui = new GUI({
+            width: 369,
+            title: 'c-gui',
+            container: document.getElementById('container')
+        });
+        console.log(gui, 'gui')
+        const controller = gui.add({options: 1}, 'options', [1, 2, 3]);
+        console.log(controller, 'controller')
+        controller.onChange(function (value) {
+            console.log(value, 'value');
+            console.log(this === controller, 'this === controller');
+        })
+        gui.onChange(function (value) {
+            console.log(value, 'value');
+        })
+    </script>
 </body>
 </html>

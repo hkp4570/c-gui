@@ -10,12 +10,20 @@
         import GUI from './scripts/lil-gui.js';
 
         const gui = new GUI({
+            width: 369,
             title: 'lil-gui'
         });
         /**
          * 第三个参数是可选的，用来设置选项 [1,2,3] {1:1,2:2,3:3} 对象的话用key值作为选项
          */
-        gui.add({options:1},'options',[1,2,3]);
+        const controller = gui.add({options:1},'options',[1,2,3]);
+        controller.onChange(function (value) {
+            console.log(value, 'value');
+            console.log(this === controller, 'this === controller');
+        })
+        gui.onChange(function(value){
+            console.log(value,'value');
+        })
     </script>
 </body>
 </html>

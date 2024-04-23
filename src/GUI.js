@@ -143,6 +143,23 @@ export default class GUI {
     }
 
     /**
+     * 传递一个函数，每当此 GUI 中的控制器发生更改时就会调用该函数
+     * @param callback
+     * @returns {this}
+     * @example
+     * gui.onChange( event => {
+     *    event.object     // object that was modified
+     *    event.property   // string, name of property
+     *    event.value      // new value of controller
+     *    event.controller // controller that was modified
+     * } );
+     */
+    onChange(callback){
+        this._onChange = callback;
+        return this;
+    }
+
+    /**
      * controller选项改变时调用
      * @param controller
      */
@@ -151,6 +168,20 @@ export default class GUI {
 
         }
         if(this._onChange !== undefined){
+            this._onChange.call(this, {
+                object: controller.object,
+                property: controller.property,
+                value: controller.getValue(),
+                controller: controller
+            })
+        }
+    }
+    _callOnFinishChange(controller){
+        if(this.parent){
+
+        }
+        console.log(this._onFinishChange, 'this._onFinishChange')
+        if(this._onFinishChange !== undefined){
 
         }
     }

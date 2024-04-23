@@ -1,8 +1,5 @@
 export default class Controller {
     constructor(parent, object, property, className, elementType = 'div') {
-        console.log('父类构造方法执行')
-        console.log(this, 'Controller  this')
-
         /**
          * 包含控制器的GUI
          * @type {GUI}
@@ -81,7 +78,7 @@ export default class Controller {
 
         this.parent.$children.appendChild(this.domElement);
         // ?
-        this._listenCallback = this._listenCallback.bind(this);
+        // this._listenCallback = this._listenCallback.bind(this);
         this.name(property);
     }
 
@@ -102,7 +99,30 @@ export default class Controller {
         if(this.getValue() !== value){
             this.object[this.property] = value;
             this._callOnChange();
+            // 调用的是子类控制器的updateDisplay方法
+            this.updateDisplay();
         }
+        return this;
+    }
+
+    /**
+     * 传递一个函数，每当该控制器修改该值时就会调用该函数。该函数接收新值作为其第一个参数。它的值将是控制器。
+     * 对于函数控制器，onChange 回调将在函数执行后单击时触发。
+     * @param callback
+     * @returns {this}
+     * @example
+     * const controller = gui.add( object, 'property' );
+     * controller.onChange( function( v ) {
+     * 	console.log( 'The value is now ' + v );
+     * 	console.assert( this === controller );
+     * } );
+     */
+    onChange(callback){
+        /**
+         * 用于访问绑定到“onChange”事件的函数。不要直接修改该值。
+         * 使用`controller.onChange(callback)`方法来代替。
+         */
+        this._onChange = callback;
         return this;
     }
 
@@ -112,6 +132,7 @@ export default class Controller {
      */
     _callOnChange(){
         this.parent._callOnChange(this);
+
         if(this._onChange !== undefined){
             this._onChange.call(this,this.getValue());
         }
@@ -137,13 +158,17 @@ export default class Controller {
      */
     _callOnFinishChange(){
         if(this._changed){
+            this.parent._callOnFinishChange(this);
+            if(this._onFinishChange !== undefined){
 
+            }
         }
         this._changed = false;
     }
 
     /**
      * 控制器的名称。使用`controller.name('Name')`来修改这个值。
+     * 设置控制器的名称及其在 GUI 中的标签。
      * @param name
      */
     name(name) {

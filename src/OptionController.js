@@ -10,9 +10,9 @@ export default class OptionController extends Controller {
         this.$display = document.createElement('div');
         this.$display.classList.add('display');
 
-        //  TODO: change事件处理
         this.$select.addEventListener('change',() => {
             this.setValue(this._values[this.$select.selectedIndex]);
+            this._callOnFinishChange();
         })
 
         this.$select.addEventListener('focus', () =>{
