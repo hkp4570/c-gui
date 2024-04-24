@@ -15,6 +15,7 @@ module.exports = {
         libraryTarget: 'umd',
 
     },
+    watch: true,
     module: {
         rules: [
             {

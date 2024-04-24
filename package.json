@@ -6,7 +6,7 @@
   "author": "hkp <colourful4570@163.com>",
   "license": "MIT",
   "scripts": {
-    "build": "webpack"
+    "build": "webpack --watch"
   },
   "dependencies": {
     "webpack": "^5.91.0",
