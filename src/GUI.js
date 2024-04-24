@@ -1,4 +1,6 @@
 import OptionController from "./OptionController";
+import NumberController from "./NumberController";
+
 export default class GUI {
     /**
      * 创建包含控制器的面板
@@ -109,11 +111,12 @@ export default class GUI {
             this.domElement.classList.add('autoPlace');
             document.body.appendChild(this.domElement);
         }
-        if(width){
+        if (width) {
             this.domElement.style.setProperty('--width', width + 'px');
         }
         this._closeFolders = closeFolders;
     }
+
     /**
      * 将控制器添加到 GUI，使用“typeof”运算符推断控制器类型
      * @param object 控制器将要修改的对象
@@ -123,10 +126,15 @@ export default class GUI {
      * @param [step] 数字控制器的步长值
      * @return {this}
      */
-    add(object,property,$1,max,step){
+    add(object, property, $1, max, step) {
         // 是一个对象或者是一个数组
-        if(Object($1) === $1){
-            return new OptionController(this,object,property,$1);
+        if (Object($1) === $1) {
+            return new OptionController(this, object, property, $1);
+        }
+        const initialValue = object[property];
+        switch (typeof initialValue) {
+            case 'number':
+                return new NumberController(this, object, property, $1, max, step);
         }
     }
 
@@ -154,7 +162,7 @@ export default class GUI {
      *    event.controller // controller that was modified
      * } );
      */
-    onChange(callback){
+    onChange(callback) {
         this._onChange = callback;
         return this;
     }
@@ -163,11 +171,11 @@ export default class GUI {
      * controller选项改变时调用
      * @param controller
      */
-    _callOnChange(controller){
-        if(this.parent){
+    _callOnChange(controller) {
+        if (this.parent) {
 
         }
-        if(this._onChange !== undefined){
+        if (this._onChange !== undefined) {
             this._onChange.call(this, {
                 object: controller.object,
                 property: controller.property,
@@ -176,6 +184,7 @@ export default class GUI {
             })
         }
     }
+
     /**
      * 传递一个函数，每当此 GUI 中的控制器完成更改时就会调用该函数。
      * @param {Function} controller
@@ -188,16 +197,17 @@ export default class GUI {
      *    event.controller // controller that was modified
      * } );
      */
-    onFinishChange(callback){
+    onFinishChange(callback) {
         this._onFinishChange = callback;
         return this;
     }
-    _callOnFinishChange(controller){
-        if(this.parent){
+
+    _callOnFinishChange(controller) {
+        if (this.parent) {
 
         }
-        if(this._onFinishChange !== undefined){
-            this._onFinishChange.call(this,{
+        if (this._onFinishChange !== undefined) {
+            this._onFinishChange.call(this, {
                 object: controller.object,
                 property: controller.property,
                 value: controller.getValue(),

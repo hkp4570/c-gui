@@ -26,19 +26,7 @@
             container: document.getElementById('container')
         });
         const controller = gui.add({options: 1}, 'options', [1, 2, 3]);
-        controller.name('c-gui-options');
-        controller.onChange(function (value) {
-            console.log(value, 'controller.onChange');
-        })
-        controller.onFinishChange(function(value){
-            console.log(value, 'controller.onFinishChange');
-        })
-        gui.onChange(function(value){
-            console.log(value,'onChange');
-        })
-        gui.onFinishChange(function(value){
-            console.log(value, 'onFinishChange');
-        })
+       gui.add({number:10},'number',0,100);
     </script>
 </body>
 </html>
