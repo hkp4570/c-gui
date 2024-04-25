@@ -35,13 +35,55 @@ export default class NumberController extends Controller {
             let value = parseFloat(this.$input.value);
             if (isNaN(value)) return;
 
+            if (this._stepExplicit) {
+                value = this._snap(value);
+            }
             this.setValue(this._clamp(value));
+        }
+        const increment = delta => {
+            const value = parseFloat(this.$input.value);
+            if (isNaN(value)) return;
+            this._snapClampSetValue(value + delta);
+            this.$input.value = this.getValue();
+        }
+        const onKeydown = (e) => {
+            if (e.key === 'Enter') {
+                this.$input.blur();
+            }
+            if (e.code === 'ArrowUp') {
+                e.preventDefault();
+                increment(this._step * this._arrowKeyMultiplier(e));
+            }
+            if (e.code === 'ArrowDown') {
+                e.preventDefault();
+                increment(this._step * this._arrowKeyMultiplier(e) * -1);
+            }
+        }
+        const onwheel = e => {
+            if (this._inputFocused) {
+                e.preventDefault();
+                increment(this._step * this._normalizeMouseWheel(e));
+            }
+        }
+        const onFocus = () => {
+            this._inputFocused = true;
+        }
+        const onBlur = () => {
+            this._inputFocused = false;
+            this.updateDisplay();
+            this._callOnFinishChange();
         }
 
         this.$input.addEventListener('input', onInput);
+        this.$input.addEventListener('keydown', onKeydown);
+        this.$input.addEventListener('wheel', onwheel, {passive: false});
+        this.$input.addEventListener('focus', onFocus);
+        this.$input.addEventListener('blur', onBlur);
+        // TODO: 鼠标移动事件
+        // this.$input.addEventListener('mousedown', onMousedown);
     }
 
-    _initSlider(){
+    _initSlider() {
         this._hasSlider = true;
         this.$slider = document.createElement('div');
         this.$slider.classList.add('slider');
@@ -67,40 +109,67 @@ export default class NumberController extends Controller {
         return this;
     }
 
-    step(step, explicit = true){
+    step(step, explicit = true) {
         this._step = step;
         this._stepExplicit = explicit;
         return this;
     }
 
-    updateDisplay(){
+    updateDisplay() {
         const value = this.getValue();
-        if(this._hasSlider){
+        if (this._hasSlider) {
             let percent = (value - this._min) / (this._max - this._min);
             percent = Math.max(0, Math.min(1, percent));
             this.$fill.style.width = percent * 100 + '%';
         }
-        if(!this._inputFocused){
-            this.$input.value = this._decimals === undefined ? value : value.toFixed( this._decimals );
+        if (!this._inputFocused) {
+            this.$input.value = this._decimals === undefined ? value : value.toFixed(this._decimals);
         }
         return this;
     }
 
-    _onUpdateMinMax(){
-        if(!this._hasSlider && this._hasMin && this._hasMax){
+    _onUpdateMinMax() {
+        if (!this._hasSlider && this._hasMin && this._hasMax) {
             // 如果没有传递step，则默认一个step
-            if(!this._stepExplicit){
+            if (!this._stepExplicit) {
                 this.step(this._getImplicitStep(), false);
             }
             this._initSlider();
         }
     }
 
-    _getImplicitStep(){
-        if(this._hasMin && this._hasMax){
+    _getImplicitStep() {
+        if (this._hasMin && this._hasMax) {
             return (this._max - this._min) / 1000;
         }
         return 0.1;
+    }
+
+    _snap(value) {
+        const r = Math.round(value / this._step) * this._step;
+        return parseFloat(r.toPrecision(15));
+    }
+
+    _arrowKeyMultiplier(e) {
+        let mult = this._stepExplicit ? 1 : 10;
+        if (e.shiftKey) {
+            mult *= 10;
+        } else if (e.altKey) {
+            mult /= 10;
+        }
+        return mult;
+    }
+
+    _normalizeMouseWheel(e) {
+        let {deltaX, deltaY} = e;
+        if(Math.floor(e.deltaY) !== e.deltaY && e.wheelDelta){
+            deltaX = 0;
+            deltaY = -e.wheelDelta / 120;
+            deltaY *= this._stepExplicit ? 1 : 10;
+        }
+        const wheel = deltaX + -deltaY;
+
+        return wheel;
     }
 
     _clamp(value) {
@@ -109,10 +178,15 @@ export default class NumberController extends Controller {
         return value;
     }
 
-    get _hasMin(){
+    _snapClampSetValue(value) {
+        this.setValue(this._clamp(this._snap(value)));
+    }
+
+    get _hasMin() {
         return this._min !== undefined;
     }
-    get _hasMax(){
+
+    get _hasMax() {
         return this._max !== undefined;
     }
 }
