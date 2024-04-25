@@ -16,7 +16,7 @@
     text-decoration-skip: objects;
 
     &:before {
-      font-family: 'lil-gui';
+      font-family: 'c-gui';
       content: '▾';
       padding-right: 2px;
       display: inline-block; // so skip: objects works
@@ -28,7 +28,7 @@
     }
 
     @include can-hover {
-      body:not(.lil-gui-dragging) &:hover {
+      body:not(.c-gui-dragging) &:hover {
         background: var(--title-background-color);
         opacity: 0.85;
       }

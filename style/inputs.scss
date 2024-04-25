@@ -46,7 +46,7 @@
     text-align: center;
     cursor: pointer;
     &:checked:before {
-      font-family: 'lil-gui';
+      font-family: 'c-gui';
       content: '✓';
       font-size: var(--checkbox-size);
       line-height: var(--checkbox-size);

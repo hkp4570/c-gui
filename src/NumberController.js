@@ -95,6 +95,49 @@ export default class NumberController extends Controller {
         this.$widget.insertBefore(this.$slider, this.$input);
 
         this.domElement.classList.add('hasSlider');
+
+        const map = (v, a, b, c, d) => {
+            return (v - a) / (b - a) * (d - c) + c;
+        }
+        const setValueFromX = (clientX) => {
+            const rect = this.$slider.getBoundingClientRect();
+            let value = map(clientX, rect.left, rect.right, this._min, this._max);
+            this._snapClampSetValue(value);
+        }
+
+        const mousedown = e => {
+            this._setDraggingStyle(true);
+            setValueFromX(e.clientX);
+            window.addEventListener('mousemove', mousemove);
+            window.addEventListener('mouseup', mouseup);
+        }
+        const mousemove = e => {
+            setValueFromX(e.clientX);
+        }
+        const mouseup = () => {
+            this._callOnFinishChange();
+            this._setDraggingStyle(false);
+            window.removeEventListener('mousemove', mousemove);
+            window.removeEventListener('mouseup', mouseup);
+        }
+        let wheelFinishChangeTimeout;
+        const callOnFinishChange = this._callOnFinishChange.bind( this );
+        const onWheel = e => {
+            // 是否是垂直滚动 垂直滚动不做处理
+            const isVertical = Math.abs(e.deltaX) < Math.abs(e.deltaY);
+            if(isVertical && this._hasScrollBar) return;
+            e.preventDefault();
+            const delta = this._normalizeMouseWheel(e) * this._step;
+            this._snapClampSetValue(this.getValue() + delta);
+            this.$input.value = this.getValue();
+            clearTimeout(wheelFinishChangeTimeout);
+            wheelFinishChangeTimeout = setTimeout(callOnFinishChange, 400);
+        }
+
+        this.$slider.addEventListener('mousedown', mousedown);
+        this.$slider.addEventListener('wheel', onWheel, {passive: false});
+        // TODO: 手指事件
+        // this.$slider.addEventListener('touchstart', touchstart);
     }
 
     min(min) {
@@ -113,6 +156,14 @@ export default class NumberController extends Controller {
         this._step = step;
         this._stepExplicit = explicit;
         return this;
+    }
+
+    _setDraggingStyle(active, axis = 'horizontal') {
+        if (this.$slider) {
+            this.$slider.classList.toggle('active', active);
+        }
+        document.body.classList.toggle('c-gui-dragging', active);
+        document.body.classList.toggle(`c-gui-${axis}`, active);
     }
 
     updateDisplay() {
@@ -162,7 +213,7 @@ export default class NumberController extends Controller {
 
     _normalizeMouseWheel(e) {
         let {deltaX, deltaY} = e;
-        if(Math.floor(e.deltaY) !== e.deltaY && e.wheelDelta){
+        if (Math.floor(e.deltaY) !== e.deltaY && e.wheelDelta) {
             deltaX = 0;
             deltaY = -e.wheelDelta / 120;
             deltaY *= this._stepExplicit ? 1 : 10;
@@ -180,6 +231,12 @@ export default class NumberController extends Controller {
 
     _snapClampSetValue(value) {
         this.setValue(this._clamp(this._snap(value)));
+    }
+
+    // 是否有滚动条
+    get _hasScrollBar(){
+        const root = this.parent.root.$children;
+        return root.scrollHeight > root.clientHeight;
     }
 
     get _hasMin() {

@@ -108,7 +108,7 @@
       }
 
       &:after {
-        font-family: 'lil-gui';
+        font-family: 'c-gui';
         content: '↕';
         position: absolute;
         top: 0;
@@ -174,8 +174,8 @@
 }
 
 // Disable hover styles and scroll when dragging sliders
-.lil-gui-dragging {
-  .lil-gui {
+.c-gui-dragging {
+  .c-gui {
     --hover-color: var(--widget-color);
   }
   * {
@@ -183,6 +183,6 @@
   }
 }
 
-.lil-gui-dragging.lil-gui-vertical * {
+.c-gui-dragging.c-gui-vertical * {
   cursor: ns-resize !important;
 }
