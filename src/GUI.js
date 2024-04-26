@@ -2,6 +2,7 @@ import OptionController from "./OptionController";
 import NumberController from "./NumberController";
 import BooleanController from "./BooleanController";
 import StringController from "./StringController";
+import FunctionController from "./FunctionController";
 
 export default class GUI {
     /**
@@ -141,6 +142,8 @@ export default class GUI {
                 return new BooleanController(this,object,property);
             case 'string':
                 return new StringController(this,object,property);
+            case 'function':
+                return new FunctionController(this,object,property);
         }
     }
 
