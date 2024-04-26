@@ -1,6 +1,7 @@
 import OptionController from "./OptionController";
 import NumberController from "./NumberController";
 import BooleanController from "./BooleanController";
+import StringController from "./StringController";
 
 export default class GUI {
     /**
@@ -138,6 +139,8 @@ export default class GUI {
                 return new NumberController(this, object, property, $1, max, step);
             case 'boolean':
                 return new BooleanController(this,object,property);
+            case 'string':
+                return new StringController(this,object,property);
         }
     }
 
