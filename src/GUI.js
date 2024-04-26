@@ -1,5 +1,6 @@
 import OptionController from "./OptionController";
 import NumberController from "./NumberController";
+import BooleanController from "./BooleanController";
 
 export default class GUI {
     /**
@@ -135,6 +136,8 @@ export default class GUI {
         switch (typeof initialValue) {
             case 'number':
                 return new NumberController(this, object, property, $1, max, step);
+            case 'boolean':
+                return new BooleanController(this,object,property);
         }
     }
 
