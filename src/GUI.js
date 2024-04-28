@@ -105,8 +105,12 @@ export default class GUI {
 
         this.title(title);
 
+        // gui.addFolder()  parent是GUI或者undefined
         if (this.parent) {
-
+            this.parent.children.push(this);
+            this.parent.folders.push(this);
+            this.parent.$children.appendChild(this.domElement);
+            return ;
         }
         if (container) {
             container.appendChild(this.domElement);
@@ -139,12 +143,57 @@ export default class GUI {
             case 'number':
                 return new NumberController(this, object, property, $1, max, step);
             case 'boolean':
-                return new BooleanController(this,object,property);
+                return new BooleanController(this, object, property);
             case 'string':
-                return new StringController(this,object,property);
+                return new StringController(this, object, property);
             case 'function':
-                return new FunctionController(this,object,property);
+                return new FunctionController(this, object, property);
         }
+    }
+
+    /**
+     * 向 GUI 添加一个文件夹，这只是另一个 GUI。该方法返回嵌套的 GUI，以便您可以向其中添加控制器。
+     * @param {string} title 显示在文件夹标题栏中的名称。
+     * @returns {GUI}
+     * @example
+     * const folder = gui.addFolder( 'Position' );
+     * folder.add( position, 'x' );
+     * folder.add( position, 'y' );
+     * folder.add( position, 'z' );
+     */
+    addFolder(title) {
+        const folder = new GUI({
+            parent: this,
+            title,
+        })
+        if (this.root._closeFolders) folder.close();
+        return folder;
+    }
+
+    /**
+     * 打开 GUI 或文件夹。 GUI 和文件夹默认打开。
+     * @param {boolean} open
+     * @return {this}
+     * @example
+     * gui.open(); // open
+     * gui.open( false ); // close
+     * gui.open( gui._closed ); // toggle
+     */
+    open(open = true) {
+        this._setClosed(!open);
+        this.$title.setAttribute( 'aria-expanded', !this._closed );
+        this.domElement.classList.toggle( 'closed', this._closed );
+        return this;
+    }
+
+    close() {
+        return this.open(false);
+    }
+
+    _setClosed(closed) {
+        if (this._closed === closed) return;
+        this._closed = closed;
+        this._callOnOpenClose(this);
     }
 
     /**
@@ -196,7 +245,7 @@ export default class GUI {
 
     /**
      * 传递一个函数，每当此 GUI 中的控制器完成更改时就会调用该函数。
-     * @param {Function} controller
+     * @param {function} callback
      * @returns {this}
      * @example
      * gui.onFinishChange( event => {
@@ -222,6 +271,29 @@ export default class GUI {
                 value: controller.getValue(),
                 controller: controller
             })
+        }
+    }
+
+    /**
+     * 传递一个在该 GUI 或其后代打开或关闭时调用的函数。
+     * @param {function} callback
+     * @returns {this}
+     * @example
+     * gui.onOpenClose( changedGUI => {
+     *   console.log( changedGUI._closed );
+     * } );
+     */
+    onOpenClose(callback) {
+        this._onOpenClose = callback;
+        return this;
+    }
+
+    _callOnOpenClose(changeGUI) {
+        if (this.parent) {
+            this.parent._callOnOpenClose(changeGUI);
+        }
+        if (this._onOpenClose !== undefined) {
+            this._onOpenClose.call(this, changeGUI);
         }
     }
 }
