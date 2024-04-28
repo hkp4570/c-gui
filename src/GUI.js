@@ -80,12 +80,11 @@ export default class GUI {
         this.$title.setAttribute('aria-expanded', true); // 标记为展开状态
         this.$title.setAttribute('tabindex', 0); // 表示元素可以通过键盘操作
 
-        this.$title.addEventListener('click', () => {
-            console.log('title click');
-        })
+        this.$title.addEventListener('click', () => this.openAnimated(this._closed));
         this.$title.addEventListener('keydown', e => {
             if (e.code === 'Enter' || e.code === 'Space') {
-                console.log(e.code);
+                e.preventDefault();
+                this.$title.click();
             }
         })
 
@@ -295,5 +294,32 @@ export default class GUI {
         if (this._onOpenClose !== undefined) {
             this._onOpenClose.call(this, changeGUI);
         }
+    }
+
+    openAnimated(open = true){
+        this._setClosed(!open);
+        this.$title.setAttribute( 'aria-expanded', !this._closed );
+        requestAnimationFrame(() => {
+            const initialHeight = this.$children.clientHeight;
+            this.$children.style.height = initialHeight + 'px';
+
+            this.domElement.classList.add('transition');
+
+            const onTransitionEnd = e => {
+                console.log('e',e);
+                if(e.target !== this.$children) return;
+                this.$children.style.height = '';
+                this.domElement.classList.remove('transition');
+                this.$children.removeEventListener('transitionend', onTransitionEnd);
+            }
+
+            this.$children.addEventListener('transitionend', onTransitionEnd);
+
+            const targetHeight = !open ? 0 : this.$children.scrollHeight;
+            this.domElement.classList.toggle( 'closed', !open );
+            requestAnimationFrame(() => {
+                this.$children.style.height = targetHeight + 'px';
+            })
+        })
     }
 }

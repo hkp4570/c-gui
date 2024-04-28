@@ -16,7 +16,30 @@
             title: 'c-gui',
         });
         const controller = gui.add({options: 1}, 'options', [1, 2, 3]);
-       gui.add({number:10},'number',0,100);
+        gui.add({number: 10}, 'number', 0, 100);
+        gui.add({boolean: true, string: 'abc'}, 'boolean').onChange(value => {
+            console.log(value, 'value')
+        });
+        gui.add({string:'abc'},'string').onChange(value => {
+            console.log(value, 'value');
+        })
+        gui.add({function:() => {
+                console.log('function')}},'function').onChange(value => {
+            console.log(value,'value')
+        })
+
+        const position = {
+            x: 1,
+            y: 2,
+            z: 3,
+        }
+        const folder = gui.addFolder( 'Position' );
+        folder.add( position, 'x' );
+        folder.add( position, 'y' );
+        folder.add( position, 'z' );
+        gui.onOpenClose(changeGui => {
+            console.log(changeGui, 'changeGui');
+        })
     </script>
 </body>
 </html>

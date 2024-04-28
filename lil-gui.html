@@ -16,9 +16,31 @@
         /**
          * 第三个参数是可选的，用来设置选项 [1,2,3] {1:1,2:2,3:3} 对象的话用key值作为选项
          */
-        const controller = gui.add({options:1},'options',[1,2,3]);
+        const controller = gui.add({options: 1}, 'options', [1, 2, 3]);
         gui.add({number: 0}, 'number', 0, 100);
+        gui.add({boolean: true}, 'boolean').onChange(value => {
+            console.log(value, 'value')
+        });
+        gui.add({string:'abc'},'string').onChange(value => {
+            console.log(value, 'value');
+        })
+        gui.add({function:() => {
+                console.log('function')}},'function').onChange(value => {
+            console.log(value,'value')
+        })
 
+        const position = {
+            x: 1,
+            y: 2,
+            z: 3,
+        }
+        const folder = gui.addFolder( 'Position' );
+        folder.add( position, 'x' );
+        folder.add( position, 'y' );
+        folder.add( position, 'z' );
+        gui.onOpenClose(changeGui => {
+            console.log(changeGui, 'changeGui');
+        })
     </script>
 </body>
 </html>
