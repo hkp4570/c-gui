@@ -5,7 +5,7 @@
     <title>lil-gui</title>
 </head>
 <body>
-
+    <button id="btn">reset</button>
     <script type="module">
         import GUI from './scripts/lil-gui.js';
 
@@ -28,7 +28,9 @@
                 console.log('function')}},'function').onChange(value => {
             console.log(value,'value')
         })
-
+        gui.title('custom-gui')
+        gui.hide();
+        gui.show();
         const position = {
             x: 1,
             y: 2,
@@ -38,9 +40,15 @@
         folder.add( position, 'x' );
         folder.add( position, 'y' );
         folder.add( position, 'z' );
+        // folder.close();
+        // folder.destroy();
         gui.onOpenClose(changeGui => {
             console.log(changeGui, 'changeGui');
         })
+        const btn = document.getElementById('btn');
+        btn.onclick = function (){
+            gui.reset(false);
+        }
     </script>
 </body>
 </html>

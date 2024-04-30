@@ -203,4 +203,19 @@ export default class Controller {
     updateDisplay() {
         return this;
     }
+    reset(){
+        this.setValue(this.initialValue);
+        this._callOnFinishChange();
+        return this;
+    }
+
+    /**
+     * 销毁此控制器并将其从父 GUI 中删除。
+     */
+    destroy(){
+        // this.listen(false)
+        this.parent.children.splice(this.parent.children.indexOf(this),1);
+        this.parent.controllers.splice(this.parent.controllers.indexOf(this), 1);
+        this.parent.$children.removeChild(this.domElement);
+    }
 }

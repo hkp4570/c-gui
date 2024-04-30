@@ -9,6 +9,8 @@
     </style>
 </head>
 <body>
+    <button id="btn">reset</button>
+    <button id="destroy">destroy</button>
     <script>
         const {GUI} = c_gui;
         const gui = new GUI({
@@ -27,6 +29,8 @@
                 console.log('function')}},'function').onChange(value => {
             console.log(value,'value')
         })
+        gui.title('custom-gui')
+        gui.hide().show()
 
         const position = {
             x: 1,
@@ -37,9 +41,18 @@
         folder.add( position, 'x' );
         folder.add( position, 'y' );
         folder.add( position, 'z' );
+        // folder.close();
         gui.onOpenClose(changeGui => {
             console.log(changeGui, 'changeGui');
         })
+        const btn = document.getElementById('btn');
+        btn.onclick = function (){
+            gui.reset(true);
+        }
+        const destroy = document.getElementById('destroy');
+        destroy.onclick = function (){
+            gui.destroy();
+        }
     </script>
 </body>
 </html>

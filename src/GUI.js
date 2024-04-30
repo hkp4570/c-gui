@@ -109,7 +109,7 @@ export default class GUI {
             this.parent.children.push(this);
             this.parent.folders.push(this);
             this.parent.$children.appendChild(this.domElement);
-            return ;
+            return;
         }
         if (container) {
             container.appendChild(this.domElement);
@@ -180,8 +180,8 @@ export default class GUI {
      */
     open(open = true) {
         this._setClosed(!open);
-        this.$title.setAttribute( 'aria-expanded', !this._closed );
-        this.domElement.classList.toggle( 'closed', this._closed );
+        this.$title.setAttribute('aria-expanded', !this._closed);
+        this.domElement.classList.toggle('closed', this._closed);
         return this;
     }
 
@@ -196,6 +196,29 @@ export default class GUI {
     }
 
     /**
+     * 显示隐藏后的 GUI。
+     * @param {boolean} show
+     * @returns {this}
+     * @example
+     * gui.show();
+     * gui.show( false ); // hide
+     * gui.show( gui._hidden ); // toggle
+     */
+    show(show = true) {
+        this._hidden = !show;
+        this.domElement.style.display = this._hidden ? 'none' : '';
+        return this;
+    }
+
+    /**
+     * 隐藏GUI
+     * @returns {this}
+     */
+    hide() {
+        return this.show(false)
+    }
+
+    /**
      * 更改gui的标题
      * @param title
      * @return {this}
@@ -205,6 +228,56 @@ export default class GUI {
         this._title = title;
         this.$title.textContent = title;
         return this;
+    }
+
+    /**
+     * 销毁与此 GUI 关联的所有 DOM 元素和事件侦听器。
+     *
+     */
+    destroy() {
+        if (this.parent) {
+            this.parent.children.splice(this.parent.children.indexOf(this), 1);
+            this.parent.folders.splice(this.parent.folders.indexOf(this), 1);
+        }
+        if(this.domElement.parentElement){
+            this.domElement.parentElement.removeChild(this.domElement);
+        }
+        Array.from(this.children).forEach(c => c.destroy());
+    }
+
+    /**
+     * 将所有控制器重置为其初始值。
+     * @param {boolean} recursive 传递 false 以排除从此 GUI 继承的文件夹。
+     * @returns {this}
+     */
+    reset(recursive = true) {
+        const controllers = recursive ? this.controllersRecursive() : this.controllers;
+        controllers.forEach(c => c.reset());
+        return this;
+    }
+
+    /**
+     * 返回此 GUI 及其后代所包含的控制器数组。
+     * @returns {Controller[]}
+     */
+    controllersRecursive() {
+        let controllers = Array.from(this.controllers);
+        this.folders.forEach(f => {
+            controllers = controllers.concat(f.controllersRecursive());
+        })
+        return controllers;
+    }
+
+    /**
+     * 返回此 GUI 及其后代所包含的文件夹数组。
+     * @returns {GUI[]}
+     */
+    foldersRecursive() {
+        let folders = Array.from(this.folders);
+        this.folders.forEach(f => {
+            folders = folders.concat(f.foldersRecursive());
+        })
+        return folders;
     }
 
     /**
@@ -296,9 +369,9 @@ export default class GUI {
         }
     }
 
-    openAnimated(open = true){
+    openAnimated(open = true) {
         this._setClosed(!open);
-        this.$title.setAttribute( 'aria-expanded', !this._closed );
+        this.$title.setAttribute('aria-expanded', !this._closed);
         requestAnimationFrame(() => {
             const initialHeight = this.$children.clientHeight;
             this.$children.style.height = initialHeight + 'px';
@@ -306,8 +379,7 @@ export default class GUI {
             this.domElement.classList.add('transition');
 
             const onTransitionEnd = e => {
-                console.log('e',e);
-                if(e.target !== this.$children) return;
+                if (e.target !== this.$children) return;
                 this.$children.style.height = '';
                 this.domElement.classList.remove('transition');
                 this.$children.removeEventListener('transitionend', onTransitionEnd);
@@ -316,7 +388,7 @@ export default class GUI {
             this.$children.addEventListener('transitionend', onTransitionEnd);
 
             const targetHeight = !open ? 0 : this.$children.scrollHeight;
-            this.domElement.classList.toggle( 'closed', !open );
+            this.domElement.classList.toggle('closed', !open);
             requestAnimationFrame(() => {
                 this.$children.style.height = targetHeight + 'px';
             })
