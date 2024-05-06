@@ -239,4 +239,26 @@ export default class Controller {
         this.parent.controllers.splice(this.parent.controllers.indexOf(this), 1);
         this.parent.$children.removeChild(this.domElement);
     }
+
+    /**
+     * 将此控制器更改为选项下拉列表
+     * 在选项控制器上调用此方法将简单地更新选项。但是，如果此控制器还不是选项控制器，则对此控制器的旧引用将被销毁，并且新控制器将添加到 GUI 的末尾
+     * @param {object | Array} options
+     * @returns {this}
+     */
+    options(options){
+        const controller = this.parent.add(this.object, this.property, options);
+        controller.name(this._name);
+        this.destroy();
+        return this;
+    }
+    min(){
+        return this;
+    }
+    max(){
+        return this;
+    }
+    step(){
+        return this;
+    }
 }

@@ -18,7 +18,7 @@
         /**
          * 第三个参数是可选的，用来设置选项 [1,2,3] {1:1,2:2,3:3} 对象的话用key值作为选项
          */
-        const controller = gui.add({options: 1}, 'options', [1, 2, 3]);
+        const controller = gui.add({options: 1}, 'options', [1, 2, 3]).options(['a','b','c']);
         const params = {
             number: 0,
         }
