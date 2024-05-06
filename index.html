@@ -11,6 +11,8 @@
 <body>
     <button id="btn">reset</button>
     <button id="destroy">destroy</button>
+    <button id="saveGui">save-gui</button>
+    <button id="loadGui">load-gui</button>
     <script>
         const {GUI} = c_gui;
         const gui = new GUI({
@@ -18,16 +20,22 @@
             title: 'c-gui',
         });
         const controller = gui.add({options: 1}, 'options', [1, 2, 3]);
-        gui.add({number: 10}, 'number', 0, 100);
+        const params = {
+            number: 10,
+        }
+        gui.add(params, 'number', 0, 1).listen();
         gui.add({boolean: true, string: 'abc'}, 'boolean').onChange(value => {
             console.log(value, 'value')
         });
-        gui.add({string:'abc'},'string').onChange(value => {
+        gui.add({string: 'abc'}, 'string').onChange(value => {
             console.log(value, 'value');
         })
-        gui.add({function:() => {
-                console.log('function')}},'function').onChange(value => {
-            console.log(value,'value')
+        gui.add({
+            function: () => {
+                console.log('function')
+            }
+        }, 'function').onChange(value => {
+            console.log(value, 'value')
         })
         gui.title('custom-gui')
         gui.hide().show()
@@ -37,21 +45,37 @@
             y: 2,
             z: 3,
         }
-        const folder = gui.addFolder( 'Position' );
-        folder.add( position, 'x' );
-        folder.add( position, 'y' );
-        folder.add( position, 'z' );
+        const folder = gui.addFolder('Position');
+        folder.add(position, 'x');
+        folder.add(position, 'y');
+        folder.add(position, 'z');
         // folder.close();
         gui.onOpenClose(changeGui => {
             console.log(changeGui, 'changeGui');
         })
         const btn = document.getElementById('btn');
-        btn.onclick = function (){
+        btn.onclick = function () {
             gui.reset(true);
         }
         const destroy = document.getElementById('destroy');
-        destroy.onclick = function (){
+        destroy.onclick = function () {
             gui.destroy();
+        }
+
+        function animate() {
+            params.number = Math.sin(Date.now() / 1000);
+            requestAnimationFrame(this.animate);
+        }
+
+        // animate();
+        const saveGui = document.getElementById('saveGui');
+        const loadGui = document.getElementById('loadGui');
+        let save = {};
+        saveGui.onclick = function(){
+            save = gui.save();
+        }
+        loadGui.onclick = function (){
+            gui.load(save);
         }
     </script>
 </body>

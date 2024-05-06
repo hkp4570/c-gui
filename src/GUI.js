@@ -239,7 +239,7 @@ export default class GUI {
             this.parent.children.splice(this.parent.children.indexOf(this), 1);
             this.parent.folders.splice(this.parent.folders.indexOf(this), 1);
         }
-        if(this.domElement.parentElement){
+        if (this.domElement.parentElement) {
             this.domElement.parentElement.removeChild(this.domElement);
         }
         Array.from(this.children).forEach(c => c.destroy());
@@ -393,5 +393,70 @@ export default class GUI {
                 this.$children.style.height = targetHeight + 'px';
             })
         })
+    }
+
+    /**
+     * 返回将控制器名称映射到值的对象。该对象可以传递给“gui.load()”来调用这些值。
+     * @example
+     * {
+     *    controllers: {
+     *        prop1: 1,
+     *        prop2: 'value',
+     *        ...
+     *    },
+     *    folders: {
+     *        folderName1: { controllers, folders },
+     *        folderName2: { controllers, folders }
+     *        ...
+     *    }
+     * }
+     * @param {boolean} recursive 传递 false 以排除从此 GUI 继承的文件夹。
+     * @returns {object}
+     */
+    save(recursive = true) {
+        const obj = {
+            controllers: {},
+            folders: {},
+        }
+        this.controllers.forEach(c => {
+            if (c instanceof FunctionController) return;
+            if (c._name in obj.controllers) {
+                throw new Error(`无法保存具有重复属性的 GUI "${c._name}"`);
+            }
+            obj.controllers[c._name] = c.save();
+        })
+        if (recursive) {
+            this.folders.forEach(f => {
+                if (f._title in obj.folders) {
+                    throw new Error(`无法使用重复的文件夹保存 GUI "${f._title}"`);
+                }
+                obj.folders[f._title] = f.save();
+            })
+        }
+        return obj;
+    }
+
+    /**
+     * 调用使用 `gui.save()` 保存的值。
+     * @param {object} obj
+     * @param {boolean} recursive
+     * @returns {this}
+     */
+    load(obj, recursive = true) {
+        if (obj.controllers) {
+            this.controllers.forEach(c => {
+                if (c instanceof FunctionController) return;
+                if (c._name in obj.controllers) {
+                    c.load(obj.controllers[c._name]);
+                }
+            })
+        }
+        if (recursive && obj.folders) {
+            this.folders.forEach(f => {
+                if (f._title in obj.folders) {
+                    f.load(obj.folders[f._title]);
+                }
+            })
+        }
     }
 }

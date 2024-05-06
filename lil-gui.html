@@ -6,6 +6,8 @@
 </head>
 <body>
     <button id="btn">reset</button>
+    <button id="saveGui">save-gui</button>
+    <button id="loadGui">load-gui</button>
     <script type="module">
         import GUI from './scripts/lil-gui.js';
 
@@ -17,16 +19,22 @@
          * 第三个参数是可选的，用来设置选项 [1,2,3] {1:1,2:2,3:3} 对象的话用key值作为选项
          */
         const controller = gui.add({options: 1}, 'options', [1, 2, 3]);
-        gui.add({number: 0}, 'number', 0, 100);
+        const params = {
+            number: 0,
+        }
+        gui.add(params, 'number', 0, 1).listen();
         gui.add({boolean: true}, 'boolean').onChange(value => {
             console.log(value, 'value')
         });
-        gui.add({string:'abc'},'string').onChange(value => {
+        gui.add({string: 'abc'}, 'string').onChange(value => {
             console.log(value, 'value');
         })
-        gui.add({function:() => {
-                console.log('function')}},'function').onChange(value => {
-            console.log(value,'value')
+        gui.add({
+            function: () => {
+                console.log('function')
+            }
+        }, 'function').onChange(value => {
+            console.log(value, 'value')
         })
         gui.title('custom-gui')
         gui.hide();
@@ -36,18 +44,35 @@
             y: 2,
             z: 3,
         }
-        const folder = gui.addFolder( 'Position' );
-        folder.add( position, 'x' );
-        folder.add( position, 'y' );
-        folder.add( position, 'z' );
+        const folder = gui.addFolder('Position');
+        folder.add(position, 'x');
+        folder.add(position, 'y');
+        folder.add(position, 'z');
         // folder.close();
         // folder.destroy();
         gui.onOpenClose(changeGui => {
             console.log(changeGui, 'changeGui');
         })
         const btn = document.getElementById('btn');
-        btn.onclick = function (){
+        btn.onclick = function () {
             gui.reset(false);
+        }
+
+        function animate() {
+            params.number = Math.sin(Date.now() / 1000);
+            requestAnimationFrame(() => {
+                animate();
+            })
+        }
+        // animate();
+        const saveGui = document.getElementById('saveGui');
+        const loadGui = document.getElementById('loadGui');
+        let save = {};
+        saveGui.onclick = function(){
+            save = gui.save();
+        }
+        loadGui.onclick = function (){
+            gui.load(save);
         }
     </script>
 </body>

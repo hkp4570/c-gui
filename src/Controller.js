@@ -77,7 +77,7 @@ export default class Controller {
         this.parent.controllers.push(this);
 
         this.parent.$children.appendChild(this.domElement);
-        // ?
+        // 绑定this
         // this._listenCallback = this._listenCallback.bind(this);
         this.name(property);
     }
@@ -139,19 +139,6 @@ export default class Controller {
         this._changed = true;
     }
 
-    _listenCallback() {
-        this._listenCallbackID = requestAnimationFrame(this._listenCallback);
-        // 为了防止帧速率丢失，请确保在更新显示之前该值已更改。
-        // 注意：这里使用 save() 而不是 getValue() 只是因为 ColorController。 !== 运算符
-        // 不适用于颜色对象或数组，但 ColorController.save() 始终返回一个字符串
-        const curValue = this.save();
-        if (curValue !== this.__listenPrevValue) {
-            this.updateDisplay();
-        }
-
-        this.__listenPrevValue = curValue;
-    }
-
     /**
      * 传递一个在该控制器被修改并失去焦点后调用的函数。
      * @param {Function} callback
@@ -210,10 +197,44 @@ export default class Controller {
     }
 
     /**
+     * 每个动画帧调用“updateDisplay()”。传递“false”以停止监听
+     * @param {boolean} listen
+     * @returns {this}
+     */
+    listen(listen = true){
+        this._listening = listen;
+        if(this._listenCallbackID !== undefined){
+            cancelAnimationFrame(this._listenCallbackID);
+            this._listenCallbackID = undefined;
+        }
+        if(this._listening){
+            this._listenCallback();
+        }
+        return this;
+    }
+
+    _listenCallback(){
+        this._listenCallbackID = requestAnimationFrame(() => this._listenCallback());
+        // 为了防止帧率丢失，请确保在更新显示之前该值已更改。
+        // 注意：这里使用 save() 而不是 getValue() 只是因为 ColorController。 !== 运算符
+        // 不适用于颜色对象或数组，但 ColorController.save() 始终返回一个字符串。
+        const curValue = this.save();
+        if(curValue !== this._listenPrevValue){
+            this.updateDisplay();
+        }
+        this._listenPrevValue = curValue;
+    }
+
+    load(value){
+        this.setValue(value);
+        this._callOnFinishChange();
+        return this;
+    }
+    /**
      * 销毁此控制器并将其从父 GUI 中删除。
      */
     destroy(){
-        // this.listen(false)
+        this.listen(false)
         this.parent.children.splice(this.parent.children.indexOf(this),1);
         this.parent.controllers.splice(this.parent.controllers.indexOf(this), 1);
         this.parent.$children.removeChild(this.domElement);
