@@ -3,6 +3,7 @@ import NumberController from "./NumberController";
 import BooleanController from "./BooleanController";
 import StringController from "./StringController";
 import FunctionController from "./FunctionController";
+import ColorController from "./ColorController";
 
 export default class GUI {
     /**
@@ -148,6 +149,27 @@ export default class GUI {
             case 'function':
                 return new FunctionController(this, object, property);
         }
+    }
+
+    /**
+     * 添加颜色控制器
+     * @param object
+     * @param property
+     * @param rgbScale 使用 RGB 颜色时颜色通道的最大值。如果您的颜色太亮，您可能需要将其设置为 255
+     * @return {Controller}
+     * @example
+     * params = {
+     *    cssColor: '#ff00ff',
+     *    rgbColor: { r: 0, g: 0.2, b: 0.4 },
+     *    customRange: [ 0, 127, 255 ],
+     * };
+     *
+     * gui.addColor( params, 'cssColor' );
+     * gui.addColor( params, 'rgbColor' );
+     * gui.addColor( params, 'customRange', 255 );
+     */
+    addColor(object, property, rgbScale = 1) {
+        return new ColorController(this, object, property, rgbScale);
     }
 
     /**

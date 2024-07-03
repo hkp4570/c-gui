@@ -77,6 +77,16 @@
         loadGui.onclick = function (){
             gui.load(save);
         }
+
+        const params_c = {
+            cssColor: '#ff00ff',
+            rgbColor: { r: 0, g: 0.2, b: 0.4 },
+            customRange: [ 0, 127, 255 ],
+        };
+
+        gui.addColor( params_c, 'cssColor' );
+        gui.addColor( params_c, 'rgbColor' );
+        gui.addColor( params_c, 'customRange', 255 );
     </script>
 </body>
 </html>
